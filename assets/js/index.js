@@ -1,31 +1,42 @@
 var questions = [
     {
-        question: "what is 1",
-        options: ["1", "2", "3"],
-        answer: "1"
+        question: "A very useful tool used during developement and debugging for printing content to the debugger is:  ",
+        options: ["1. JavaScript", "2. Terminal", "3. For Loops", "4. Console.log()"],
+        answer: 1
     },
     {
-        question: "what is 2",
-        options: ["3", "2", "1"],
-        answer: "2"
+        question: "The condition in an if/else statement is enclosed with _______.",
+        options: ["1. quotes", "2. curly brackets", "3. parenthesis", "4. square brackets"],
+        answer: 1
     },
     {
-        question: "what is 3",
-        options: ["3", "2", "1"],
-        answer: "3"
+        question: "Arrays in Javascript can be used to store _____",
+        options: ["1. Numbers and Strings", "2. Other Arrays", "3. Booleans", "4. All the Above"],
+        answer: 3
+    },
+    {
+        question: "Commonly used data types do NOT include",
+        options: ["1. Strings", "2. Boolean", "3. Alerts", "4. Numbers"],
+        answer: 2
+    },
+    {
+        question: "String values must be enclosed within ____ when being assigned to variables",
+        options: ["1. Commas", "2. Curly Brackets", "3. Quotes", "4. Parethesis"],
+        answer: 2
     }
 ];
 
 var startButton = document.getElementById("start");
 var timerElement = document.getElementById("timer");
-var timeLeft = 10; 
+var timeLeft = 2; 
 var userScore = 0;
 var displayScore = document.getElementById("displayScore");
-
-displayScore.innerText = userScore;
+var randomNum;  
+var viewHighScore = document.getElementById("score");
+var startPage;
 
 var startQuiz = function(){
-    var startPage = document.getElementById("start-page");
+    startPage = document.getElementById("start-page");
     startPage.remove();
     populateQuestion();
     countDown();
@@ -34,7 +45,7 @@ var startQuiz = function(){
 function countDown(){
     var timer = setInterval(function() {
         timerElement.innerText = timeLeft--;
-        if(timeLeft == 1) {
+        if(timeLeft < 0) {
             clearInterval(timer) 
             stopQuiz();
         }
@@ -42,69 +53,111 @@ function countDown(){
 }
 
 function populateQuestion(){
-    let randomNum = Math.floor(Math.random() * 2);
-    let q = document.createElement("span");
-    let queue = document.getElementById("quizQuestions");
-    let button = document.createElement("button");
+    if(questions.length == 0){
+        stopQuiz();   
+    }
 
-    button.addEventListener("click", validateQuestion);
+    randomNum = Math.floor(Math.random() * questions.length);
+    let q = document.createElement("h1");
+    let queue = document.getElementById("quizQuestions");
+    let answer = questions[randomNum].answer;
 
     queue.innerHTML = "";
-
-    button.innerText = "Check Answer";
-    button.setAttribute("value", questions[randomNum].answer);
-    button.setAttribute("class", "checkAnswer");
-
     q.innerText = questions[randomNum].question;
-    queue.append(q, button);
+
+    queue.append(q);
 
     let inputQueue = document.getElementById("quizQuestions");
     let optionArray = questions[randomNum].options;
 
     optionArray.forEach((val, index) => {
-        let input = document.createElement("input");
-        let label = document.createElement("label");
+        let optionButton = document.createElement("button");
+        optionButton.innerText = val;
 
-        label.innerText = val;
-        label.setAttribute("for", val);
-        input.setAttribute("type", "radio");
-        input.setAttribute("value", val);
-        input.setAttribute("name", "answerOptions");
+        optionButton.setAttribute("name", index);
+        optionButton.setAttribute("value", answer);
+        optionButton.addEventListener("click", validateQuestion);
 
-        inputQueue.append(input, label);
+        inputQueue.append(optionButton);
     });
-
-   // questions.splice(questions[randomNum], 1);
 }
 
 
 function validateQuestion(event){
-    let answer = event.target.value;
-    let optionList = document.getElementById("quizQuestions").getElementsByTagName("input");
+    event.preventDefault();
 
-    for(i = 0; i < optionList.length; i++){
-        if(optionList[i].checked && optionList[i].value == answer){
-            console.log("WOOOO");
-            timeLeft = timeLeft + 20;
-            userScore = userScore + 5;
-            displayScore.innerText = userScore;
-            populateQuestion();
-        } else if (optionList[i].checked && optionList[i].value != answer && userScore > 0){
-            userScore = userScore -1;
-            displayScore.innerText = userScore;
-            console.log("ya dumb and lost a point");
-        }
-        else if(optionList[i].checked && optionList[i].value != answer && userScore == 0){
-            stopQuiz();
-        }
+    let correctAnswer = event.target.value;
+    let userAnswer = event.target.name;
+    let optionList = document.getElementById("quizQuestions").getElementsByTagName("button");
+    
+    if(userAnswer == correctAnswer){
+        timeLeft = timeLeft + 20;
+        userScore = userScore + 5;
+        questions.splice(randomNum, 1);
+        populateQuestion();
+    } else if (userAnswer != correctAnswer && userScore > 0){
+        userScore = userScore -1;
+        populateQuestion();
+    }
+    else if(userAnswer != correctAnswer && userScore == 0){
+        userScore = userScore -1;
+        stopQuiz();
     }
 }
 
 function stopQuiz(){
     let username = prompt("The quiz is over! Please enter your name");
-
     localStorage.setItem(username, userScore);
+    showScore();
 }
 
+function backToStart(event){
+    event.preventDefault();
+    let quizQ = document.getElementById("quizQuestions");
+    let highscoreDisplay = document.getElementById("highScore");
+    console.log(startPage);
+
+   // startPage.style.display = "flex";
+    //quizQ.remove();
+    //highscoreDisplay.remove();
+}
+
+function showScore(){
+    let quizQ = document.getElementById("quizQuestions");
+    let highscoreDisplay = document.getElementById("highScore");
+    let backButton = document.createElement("button");
+    let title = document.createElement("h1");
+    let allScores = [];
+    
+    quizQ.remove();
+    startPage.remove();
+
+    title.innerText = "High Scores";
+    highscoreDisplay.append(title);
+    backButton.innerText = "Go Back";
+
+    for (var i = 0; i < localStorage.length; i++){
+        allScores.push({
+            "user": localStorage.key(i),
+            "score": localStorage.getItem(localStorage.key(i))
+        });
+    };
+
+    allScores = allScores.sort(function (a, b) {
+        return b.score - a.score;
+    });
+
+    for (var i = 0; i < allScores.length; i++){
+        let users = document.createElement("section");
+        users.setAttribute("class", "userScore");
+        users.innerText = (i + 1) + ". " + allScores[i].user + ": " + allScores[i].score;
+        highscoreDisplay.append(users);
+    }
+
+    highscoreDisplay.append(backButton);
+    backButton.addEventListener("click", backToStart);
+}
 
 startButton.addEventListener("click", startQuiz);
+viewHighScore.addEventListener("click", showScore);
+

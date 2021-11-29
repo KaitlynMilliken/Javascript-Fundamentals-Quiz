@@ -1,0 +1,65 @@
+header {
+    padding-top: 15px;
+    width: 100%;
+}
+
+#score{
+    padding-left: 20px;
+    color: #9a56dc;
+}
+
+#timerHolder{
+    float:right;
+    padding-right: 50px;
+}
+
+#start-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1{
+    font-size: 40px;
+}
+
+#start{
+    width: 100px;
+}
+
+#quizQuestions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button{
+    background-color: #6745c3;
+    color: white;
+    border:none;
+    border-radius: 10px;
+    margin-top: 30px;
+    height: 40px;
+    font-size: 18px;
+    width: 150px;
+}
+
+button:hover {
+    background-color: #9a56dc;
+}
+
+#highScore{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.userScore{
+    background-color: #d6bbf1;
+    margin-top: 20px;
+    padding-top: 5px;
+    padding-left: 10px;
+    width: 300px;
+    height: 25px;
+}
+
